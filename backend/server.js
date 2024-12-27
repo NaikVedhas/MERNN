@@ -19,7 +19,6 @@ app.use((req,res,next)=>{
 
 app.use('/workouts',workoutRoutes);
 
-
 //Connect to DB
 
 mongoose.connect(process.env.MONGO_URI)
