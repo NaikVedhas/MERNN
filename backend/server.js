@@ -14,17 +14,16 @@ app.use((req,res,next)=>{
     
 })
 
-
 //Routes 
 
-app.use('/workouts',workoutRoutes);
+app.use('/backend/workouts',workoutRoutes);
 
 //Connect to DB
 
 mongoose.connect(process.env.MONGO_URI)
 .then(()=>{
     app.listen(process.env.PORT,()=>{
-        console.log("Connected to DB and Listening on port 3000 ");
+        console.log(`Connected to DB and Listening on port ${process.env.PORT} `);
     })
 })
 .catch((err)=> console.log(err))

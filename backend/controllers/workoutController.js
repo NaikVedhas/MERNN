@@ -2,11 +2,12 @@ const Workout = require('../models/workoutModel');
 const  mongoose   = require('mongoose');
 
 // get all workouts
-
+``
 const getWorkouts = (req,res)=>{ //instead of .then we can use async await too ha
     
     Workout.find().sort({createdAt: -1})
     .then((result)=>{
+        
         res.status(200).json(result);
     })
     .catch((err)=>{
@@ -83,7 +84,7 @@ const updateWorkout = (req,res)=>{
     Workout.findByIdAndUpdate({_id:id},{...req.body})            //in secons arg we need to give data
     .then((result)=>{    //this result is not the updated one its the old one (this is what we get back)
 
-        if(!result) res.json(404).json({error:"No such Workout present"})
+        if(!result) res.status(404).json({error:"No such Workout present"})
         res.status(200).json(result);
 
     })
