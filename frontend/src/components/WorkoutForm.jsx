@@ -1,11 +1,15 @@
 import { useState } from "react";
+import { useWorkoutContext } from "../context/workoutContext.jSX";
 
 const WorkoutForm = () => {
   const [title, setTitle] = useState('');
   const [load, setLoad] = useState('');
   const [reps, setReps] = useState('');
   const [error, setError] = useState(null);
+  const [emptyFields,setEmptyFields] = useState([]);
 
+
+ const data =  useWorkoutContext();
   const handleSubmit = (e) => {
     e.preventDefault();
     const newWorkout = { title, load, reps };
@@ -21,14 +25,22 @@ const WorkoutForm = () => {
       if (!result.ok) {
         return result.json().then((json) => {
           setError(json.error);
+          setEmptyFields(json.emptyFields);
         });
-      } else {
-        setError(null);
-        setTitle('');
-        setLoad('');
-        setReps('');
-      }
+      } else{
+        return result.json();
+      } 
     })
+      .then((response)=>{
+        if(response){   // ie response mein kuch hoga toh
+          setError(null);
+          setTitle(''); //Agaar yeh nahi kiya na toh even after adding a new workout then value in the form will not change 
+          setLoad('');
+          setReps('');
+          setEmptyFields([]);
+          data.setWorkout((prev)=>[response,...prev]); //updating the context
+        }
+      })
     .catch((err) => {
       setError('Failed to add workout. Please try again later.');
       console.log(err);
@@ -45,24 +57,24 @@ const WorkoutForm = () => {
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className={emptyFields.includes('title') ? 'w-full px-4 py-2 border border-red-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500' :"w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"}
         />
         <label className="block text-lg font-medium mb-2 mt-4">Load (in kgs)</label>
         <input
           type="number"
           value={load}
           onChange={(e) => setLoad(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className={emptyFields.includes('load') ? 'w-full px-4 py-2 border border-red-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500' :"w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"}
         />
         <label className="block text-lg font-medium mb-2 mt-4">Reps</label>
         <input
           type="number"
           onChange={(e) => setReps(e.target.value)}
           value={reps}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className={emptyFields.includes('reps') ? 'w-full px-4 py-2 border border-red-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500' :"w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"}
         />
         <button
-          type="submit"
+          type="submit"  //yeh likha hai so onsubmit function isko attach hua
           className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 mt-6"
         >
           Add Workout

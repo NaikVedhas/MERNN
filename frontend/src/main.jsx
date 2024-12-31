@@ -5,6 +5,7 @@ import { RouterProvider,Route,createBrowserRouter, createRoutesFromElements } fr
 import './index.css'
 import Home from './components/Home'
 import NotFound from './components/NotFound';
+import { WorkoutProvider } from './context/workoutContext.jSX';
 
 const router = createBrowserRouter(
  createRoutesFromElements(
@@ -16,6 +17,8 @@ const router = createBrowserRouter(
 )
 createRoot(document.getElementById('root')).render(
   <StrictMode>
+    <WorkoutProvider>
       <RouterProvider router={router} />
+    </WorkoutProvider>
   </StrictMode>,
 )
