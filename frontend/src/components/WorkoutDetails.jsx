@@ -1,5 +1,5 @@
 import { useWorkoutContext } from "../context/workoutContext.jSX"
-
+import { IoTrashBinOutline  } from "react-icons/io5";
 
 const WorkoutDetails = ({workout}) => {  //yeh workout hum props se hi lere ha context se nhi
   
@@ -20,10 +20,10 @@ const WorkoutDetails = ({workout}) => {  //yeh workout hum props se hi lere ha c
   return (
     <div className="bg-white p-6 rounded-2xl mx-12 my-8 w-2/3">
         <h1 className="text-3xl italic font-bold">{workout.title}</h1>
-        <div className="text-xl">
-        <h2>Load: {workout.load}</h2>
-        <h2>Reps: {workout.reps}</h2>
-        <button className="bg-black text-white rounded-lg px-2 py-1" onClick={handleClick}>Delete</button>
+        <div className="text-xl flex">
+        <h2 className="m-2">Load: {workout.load}</h2>
+        <h2 className="m-2">Reps: {workout.reps}</h2>
+        <button className="bg-black text-white rounded-lg px-2 py-1 ml-auto" onClick={handleClick}><IoTrashBinOutline /></button>
         </div>
     </div>
   )
