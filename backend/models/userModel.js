@@ -53,4 +53,28 @@ userSchema.statics.signup = async function (email,password) { //when we use this
 
     return user;  // we will call from function from diff location so we are returning  
 }
+
+//static login yaha pe statics ke baad kuch bhi name likh sakte hai
+
+userSchema.statics.login=async function (email,password) {
+
+    if(!email || !password){
+        throw Error("Email and Pawword is required");
+    }
+    
+    const user = await this.findOne({email});         
+
+    if(!user) { 
+        throw Error("Incorrect email id"); //as the user doesnt exist
+    }
+
+    //Now we will check the password but its not stored normally we need to check the hashes
+
+    const match = await bcrypt.compare(password,user.password); //match is a bool
+    if(!match){
+        throw Error("Incorrect Password");
+    }
+
+    return user;
+}
 module.exports = mongoose.model('User',userSchema);
