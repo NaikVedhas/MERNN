@@ -56,7 +56,7 @@ userSchema.statics.signup = async function (email,password) { //when we use this
 
 //static login yaha pe statics ke baad kuch bhi name likh sakte hai
 
-userSchema.statics.login=async function (email,password) {
+userSchema.statics.login = async function (email,password) {
 
     if(!email || !password){
         throw Error("Email and Pawword is required");

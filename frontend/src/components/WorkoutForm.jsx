@@ -12,7 +12,7 @@ const WorkoutForm = () => {
 
  const workoutContext =  useWorkoutContext();
   
- const handleSubmit = (e) => {
+ const handleSubmit =async (e) => {
     
     e.preventDefault();
 
@@ -23,7 +23,7 @@ const WorkoutForm = () => {
     
     const newWorkout = { title, load, reps };
 
-    fetch('/backend/workouts/', {
+    const response = await fetch('/backend/workouts/', {
       method: 'POST',
       body: JSON.stringify(newWorkout), // converting our newWorkout to json format
       headers: {
@@ -31,30 +31,23 @@ const WorkoutForm = () => {
         'Authorization':`Bearer ${userContext.user.token}`
       }
     })
-    .then((result) => {
-      if (!result.ok) {
-        return result.json().then((json) => {
-          setError(json.error);
-          setEmptyFields(json.emptyFields);
-        });
-      } else{
-        return result.json();
-      } 
-    })
-      .then((response)=>{
-        if(response){   // ie response mein kuch hoga toh
-          setError(null);
-          setTitle(''); //Agaar yeh nahi kiya na toh even after adding a new workout then value in the form will not change 
-          setLoad('');
-          setReps('');
-          setEmptyFields([]);
-          workoutContext.createWorkout(response); //updating the context
-        }
-      })
-    .catch((err) => {
-      setError('Failed to add workout. Please try again later.');
-      console.log(err);
-    });
+
+    const json = await response.json();
+
+    if(!response.ok){
+      setError(json.error)
+      setEmptyFields(json.emptyFields);
+    }
+    else{
+      setError(null);
+      setTitle(''); //Agaar yeh nahi kiya na toh even after adding a new workout then value in the form will not change and be same as previous
+      setLoad('');
+      setReps('');
+      setEmptyFields([]);
+      workoutContext.createWorkout(json); //updating the context
+    }
+
+
   };
 
   return (

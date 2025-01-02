@@ -11,7 +11,6 @@ const Signup = () => {
   
   const handleSubmit = async (e) => {
     
-
     e.preventDefault();
 
     const response = await fetch('/backend/user/signup',{
@@ -26,8 +25,8 @@ const Signup = () => {
         setError(json.error);
         console.log("Errror bhai");
         console.log(json.error);
-        
-    }else{
+    }
+    else{
 
         //update the auth (save the whole json)
         console.log(json);

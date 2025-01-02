@@ -18,11 +18,15 @@ const Login = () => {
       body:JSON.stringify({email,password})
     }) 
 
+    console.log(response);
+    console.log(response.status);
+    
     const json = await response.json();
 
     if(!response.ok){
       setError(json.error);
-    }else{
+    }
+    if(response.ok){
       setError(null);
       userContext.login(json);
     }

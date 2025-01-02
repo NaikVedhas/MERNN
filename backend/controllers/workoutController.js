@@ -2,26 +2,19 @@ const Workout = require('../models/workoutModel');
 const  mongoose   = require('mongoose');
 
 // get all workouts
-``
-const getWorkouts = (req,res)=>{ //instead of .then we can use async await too ha
+
+const getWorkouts = async (req,res)=>{ //instead of .then we can use async await too ha
     
     //So har ek user ko uske hi routed dikhe uske liye hum na bacekend mein ek user_id bhi save karenge and phir yaha se conditionally send karenge
     const user_id = req.user._id;
-
-    Workout.find({user_id}).sort({createdAt: -1})
-    .then((result)=>{
-        
-        res.status(200).json(result);
-    })
-    .catch((err)=>{
-        res.status(400).json({error:err.message})
-    })
+    const workouts = await Workout.find({user_id}).sort({createdAt: -1});
+    res.status(200).json(workouts);
     
 }
 
 //get single a workout
 
-const getSingleWorkout = (req,res) =>{
+const getSingleWorkout = async (req,res) =>{
 
     const {id} =req.params;
     
@@ -30,20 +23,18 @@ const getSingleWorkout = (req,res) =>{
         res.status(404).json({error:"No such workout"});
     }
 
-    Workout.findById(id)
-    .then((result)=>{
-        if(!result) res.status(404).json({error:"No such workout present"});     //this means that id is of valid format but there is no docuemnt of this id so we send this
-        res.status(200).json(result);
-    })
-    .catch((err)=> {
-        res.status(404).json({error: err.message})
-    })
+    const workout = await Workout.findById(id);
+
+    if(workout){
+        res.status(200).json(workout)
+    }
+    res.json(400).json({error:"No such workout"})
 }
 
 // create a new workout
 
 
-const createWorkout = (req,res)=>{
+const createWorkout = async (req,res)=>{
 
     const {title,load,reps}= req.body;
     const user_id = req.user._id;
@@ -65,21 +56,18 @@ const createWorkout = (req,res)=>{
         return res.status(400).json({error:"Please fill all fields",emptyFields})
     }
 
-    const workout = new Workout({title,load,reps,user_id});
-
-    workout.save()
-    .then((result)=>{
-        res.status(200).json(result);
-    })
-    .catch((err)=>{
-        res.status(400).json({error:err.message});
-    })
+    try {
+        const workout = await Workout.create({title, load, reps, user_id});
+        res.status(200).json(workout);
+    } catch (error) {
+        res.status(400).json({error: error.message})
+    }
 }
 
 //delete a workout
 
 
-const deleteWorkout = (req, res) =>{
+const deleteWorkout = async(req, res) =>{
 
     const {id} = req.params;
 
@@ -87,31 +75,27 @@ const deleteWorkout = (req, res) =>{
         res.status(404).json({error:"No such workout"});
     }
 
-    Workout.findOneAndDelete({_id:id})
-    .then((result)=>{  //result will contain the document(workout) which we just deleted
-        if(!result) res.status(404).json({error:"No such workout present to delete"}); // this means that we didnt found the workout with this id
-        res.status(200).json(result);
-    })
-    .catch((err)=> res.status(400).json({error:err.message}));
+    const workout = await Workout.findOneAndDelete({_id:id}); //workout will contain the document(workout) which we just deleted
 
+    if(!workout){ 
+        res.status(404).json({error:"No such workout present to delete"}); // this means that we didnt found the workout with this id
+    }
+    res.status(200).json(workout)
 }
 
 //update a workout
 
-const updateWorkout = (req,res)=>{
+const updateWorkout = async (req,res)=>{
 
     const {id} = req.params;
 
     if(!mongoose.Types.ObjectId.isValid(id)) res.status(400).json({erro:"No such workout "})
 
-    Workout.findByIdAndUpdate({_id:id},{...req.body})            //in secons arg we need to give data
-    .then((result)=>{    //this result is not the updated one its the old one (this is what we get back)
-
-        if(!result) res.status(404).json({error:"No such Workout present"})
-        res.status(200).json(result);
-
-    })
-    .catch((err)=> res.status(400).json({error:err.message}));
+    const workout= await Workout.findByIdAndUpdate({_id:id},{...req.body}); //this workout is the old version which we will get back not teh updated one
+    if(!workout){
+        res.status(404).json({error:"No such Workout present"})
+    }
+    res.status(200).json(workout);
 }
 
 module.exports = {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import WorkoutDetails from "./WorkoutDetails";
 import WorkoutForm from "./WorkoutForm";
 import { useWorkoutContext } from "../context/workoutContext";
@@ -12,29 +12,32 @@ const Home = () => {
 
   const userContext = useAuthContext();
 
-  useEffect(() => {
+  useEffect( () => {
     
-    if(userContext.user){   //this is imp
+    
+    const fetchData = async () =>{ //we cant use ayncy in useffect directly so we created this function inside
       
-      fetch('/backend/workouts/',{
+      const response  = await fetch('/backend/workouts/',{
         headers:{
           'Authorization':`Bearer ${userContext.user.token}`
       }
-    })  //yaha pe https://localhost:4000/backend/workouts/ likhne ki jarurat nahi woh package.json mein likha hai starting ka
-    .then((result) => {
-      if (result.ok) {
-        return result.json();
-      } else throw Error("Database Down");
-    })
-    .then(data => {
-      workoutContext.setWorkout(data);   //Sending data to global context
-    })
-    .catch((err) => {
-      console.log(err);
-    })
-  }
+      })  //yaha pe https://localhost:4000/backend/workouts/ likhne ki jarurat nahi woh package.json mein likha hai starting ka
+      
+      const json = await response.json();
+      
+      if(response.ok){
+        workoutContext.setWorkout(json);  
+      }
+      
+    }
+
+    if(userContext.user){  //only if login then show data 
+      fetchData();
+    }
+  
 
   }, [userContext.user]);
+
 
   return (
     <div className="flex justify-between space-x-6 p-6">
