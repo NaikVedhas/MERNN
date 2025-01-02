@@ -1,13 +1,23 @@
 import { useWorkoutContext } from "../context/workoutContext.jSX"
 import { IoTrashBinOutline  } from "react-icons/io5";
+import { useAuthContext } from "../context/AuthContext";
 
 const WorkoutDetails = ({workout}) => {  //yeh workout hum props se hi lere ha context se nhi
   
   const data = useWorkoutContext(); //context ka use delete request mein kiya
+  const userContext = useAuthContext();
 
   const handleClick = async () =>{
+
+    if(!userContext.user){
+      return;
+    }
+    
     const response = await fetch(`/backend/workouts/${workout._id}`,{
-      method:'DELETE'
+      method:'DELETE',
+      headers:{
+        'Authorization':`Bearer ${userContext.user.token}`
+      }
     })
 
     const json = await response.json();

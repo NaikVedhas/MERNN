@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useAuthContext } from "../context/AuthContext";
+
 const Signup = () => {
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error,setError]= useState(null);
@@ -68,6 +70,8 @@ const Signup = () => {
         >
           Submit
         </button>
+        {error && <div>{error}</div> }
+
       </form>
     </div>
   );

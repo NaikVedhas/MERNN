@@ -1,15 +1,26 @@
 import { useEffect, useState } from "react";
 import WorkoutDetails from "./WorkoutDetails";
 import WorkoutForm from "./WorkoutForm";
-import { useWorkoutContext } from "../context/workoutContext.jSX";
+import { useWorkoutContext } from "../context/workoutContext";
+import {useAuthContext} from "../context/AuthContext";
+
 const Home = () => {
   
   //For integrating backend to frontend we here also do just fetchrequest from our backend which is running on port 4000. But for CORS reasons(an error occurs whwne we communicate from one localhost to another) we need to add proxy:localhost:4000 in our react package.json file so that we can commuincate and integration is just like fetching api. And yeh proxy vite.config mein bhi likhna padta hai 
   
   const workoutData = useWorkoutContext();  //fetching global context and iska hi content dikhaenge on page
 
+  const userContext = useAuthContext();
+
   useEffect(() => {
-    fetch('/backend/workouts/')  //yaha pe https://localhost:4000/backend/workouts/ likhne ki jarurat nahi woh package.json mein likha hai starting ka
+    
+    if(userContext.user){   //this is imp
+      
+      fetch('/backend/workouts/',{
+        headers:{
+          'Authorization':`Bearer ${userContext.user.token}`
+      }
+    })  //yaha pe https://localhost:4000/backend/workouts/ likhne ki jarurat nahi woh package.json mein likha hai starting ka
     .then((result) => {
       if (result.ok) {
         return result.json();
@@ -21,7 +32,9 @@ const Home = () => {
     .catch((err) => {
       console.log(err);
     })
-  }, []);
+  }
+
+  }, [userContext.user]);
 
   return (
     <div className="flex justify-between space-x-6 p-6">

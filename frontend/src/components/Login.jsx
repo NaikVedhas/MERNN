@@ -1,12 +1,32 @@
 import { useState } from "react";
+import { useAuthContext } from "../context/AuthContext";
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error,setError]= useState(null);
 
-  const handleSubmit = (e) => {
+  const userContext = useAuthContext();
+
+  const handleSubmit = async (e) => {
+   
     e.preventDefault();
-    console.log(email, password);
+
+    const response = await fetch('/backend/user/login',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email,password})
+    }) 
+
+    const json = await response.json();
+
+    if(!response.ok){
+      setError(json.error);
+    }else{
+      setError(null);
+      userContext.login(json);
+    }
+
   };
 
   return (
@@ -43,6 +63,7 @@ const Login = () => {
         >
           Submit
         </button>
+        {error && <div>{error}</div> }
       </form>
     </div>
   );
