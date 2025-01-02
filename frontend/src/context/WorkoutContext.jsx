@@ -8,8 +8,16 @@ export const WorkoutProvider = (props) => {
     
     const [workout,setWorkout] = useState([]);
     
+    const createWorkout = (response) =>{
+        setWorkout((prev)=>[response,...prev])
+    }
+
+    const deleteWorkout = (id) =>{
+        setWorkout((prev)=> prev.filter((w) => w._id!==id))
+    }
+
     return(
-        <WorkoutContext.Provider value={{workout,setWorkout}}>
+        <WorkoutContext.Provider value={{workout,createWorkout,deleteWorkout,setWorkout}}>
             {props.children}
         </WorkoutContext.Provider>
     )

@@ -4,7 +4,7 @@ import { useAuthContext } from "../context/AuthContext";
 
 const WorkoutDetails = ({workout}) => {  //yeh workout hum props se hi lere ha context se nhi
   
-  const data = useWorkoutContext(); //context ka use delete request mein kiya
+  const workoutContext = useWorkoutContext(); //context ka use delete request mein kiya
   const userContext = useAuthContext();
 
   const handleClick = async () =>{
@@ -23,7 +23,7 @@ const WorkoutDetails = ({workout}) => {  //yeh workout hum props se hi lere ha c
     const json = await response.json();
 
     if(response.ok){
-      data.setWorkout((prev)=> prev.filter((w) => w._id!==workout._id))
+      workoutContext.deleteWorkout(workout._id);
     }
   }
  

@@ -10,7 +10,7 @@ const WorkoutForm = () => {
 
   const userContext = useAuthContext();
 
- const data =  useWorkoutContext();
+ const workoutContext =  useWorkoutContext();
   
  const handleSubmit = (e) => {
     
@@ -48,7 +48,7 @@ const WorkoutForm = () => {
           setLoad('');
           setReps('');
           setEmptyFields([]);
-          data.setWorkout((prev)=>[response,...prev]); //updating the context
+          workoutContext.createWorkout(response); //updating the context
         }
       })
     .catch((err) => {
