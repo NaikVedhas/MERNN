@@ -5,7 +5,10 @@ const  mongoose   = require('mongoose');
 ``
 const getWorkouts = (req,res)=>{ //instead of .then we can use async await too ha
     
-    Workout.find().sort({createdAt: -1})
+    //So har ek user ko uske hi routed dikhe uske liye hum na bacekend mein ek user_id bhi save karenge and phir yaha se conditionally send karenge
+    const user_id = req.user._id;
+
+    Workout.find({user_id}).sort({createdAt: -1})
     .then((result)=>{
         
         res.status(200).json(result);
@@ -43,7 +46,7 @@ const getSingleWorkout = (req,res) =>{
 const createWorkout = (req,res)=>{
 
     const {title,load,reps}= req.body;
-
+    const user_id = req.user._id;
     //Well check before only that all fields are filled or not rather than catching the error send by db for missing feild
 
     let emptyFields = [];
@@ -62,7 +65,7 @@ const createWorkout = (req,res)=>{
         return res.status(400).json({error:"Please fill all fields",emptyFields})
     }
 
-    const workout = new Workout(req.body);
+    const workout = new Workout({title,load,reps,user_id});
 
     workout.save()
     .then((result)=>{

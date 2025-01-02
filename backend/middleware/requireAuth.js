@@ -18,7 +18,7 @@ const requireAuth = async (req,res,next) =>{
     try{
         const {_id} = jwt.verify(token,process.env.SECRET); //this returns us the token so we grab the id from the payload
 
-        req.userId = await User.findOne({_id}).select('_id');   //so here we found the particular user who has send the request 
+        req.user = await User.findOne({_id}).select('_id');   //so here we are adding user property to request object
         next();
 
     }catch(error){

@@ -1,11 +1,13 @@
 import { NavLink } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
-
+import { useWorkoutContext } from "../context/workoutContext";
 const Navbar = () => {
   const userContext = useAuthContext();
-
+  const data = useWorkoutContext();
   const handleClick = () => {
     userContext.logout();
+    //And se  kab logout karoge na tab workout context mein jo store hai na woh delete karo nhi toh agla user jab login karrahai na tab ushe temporary woh dikhta hai jo sab store hai in workout context untill the data from backend comes
+    data.setWorkout([]);
   };
 
   return (
